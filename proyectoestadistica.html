@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SetPredictor — Jesse & Joy · Despecho Tour</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #111118;
+      --card:      #16161f;
+      --border:    rgba(255,255,255,0.07);
+      --accent:    #e8c97e;
+      --accent2:   #c46d9e;
+      --text:      #e8e6e0;
+      --muted:     #7a7880;
+      --sure:      #5de8a0;
+      --unsure:    #e8c97e;
+      --no:        #e86060;
+      --radius:    12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 180px;
+      pointer-events: none;
+      z-index: 999;
+      opacity: .45;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      padding: 64px 24px 48px;
+      text-align: center;
+      overflow: hidden;
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(196,109,158,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .artist-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(232,201,126,.1);
+      border: 1px solid rgba(232,201,126,.25);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      animation: fadeUp .6s ease both;
+    }
+    .artist-badge span.dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100% { opacity:1; } 50% { opacity:.3; }
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 10vw, 110px);
+      line-height: .92;
+      letter-spacing: .02em;
+      animation: fadeUp .7s .1s ease both;
+    }
+    h1 .line2 {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,201,126,.6);
+    }
+
+    .subtitle {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: 14px;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    .tour-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
+      color: #0a0a0f;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-top: 16px;
+      animation: fadeUp .7s .3s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(18px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 0 24px 40px;
+      animation: fadeUp .7s .4s ease both;
+    }
+    .stat-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 22px;
+      text-align: center;
+    }
+    .stat-pill .num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .stat-pill .lbl {
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 780px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── FILTERS ── */
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      animation: fadeUp .7s .5s ease both;
+    }
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,201,126,.07);
+    }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 20px;
+      animation: fadeUp .7s .55s ease both;
+    }
+    .search-wrap input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 12px 16px 12px 42px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .search-wrap input:focus { border-color: rgba(232,201,126,.4); }
+    .search-wrap input::placeholder { color: var(--muted); }
+    .search-wrap svg {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    /* ── SONG LIST ── */
+    #song-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: fadeUp .7s .6s ease both;
+    }
+
+    .song-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s;
+      position: relative;
+      overflow: hidden;
+    }
+    .song-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      border-radius: 3px 0 0 3px;
+      background: var(--bar-color, var(--muted));
+      opacity: .5;
+      transition: opacity .2s;
+    }
+    .song-card:hover {
+      border-color: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.03);
+      transform: translateX(2px);
+    }
+    .song-card:hover::before { opacity: 1; }
+
+    .song-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1;
+    }
+    .song-info { min-width: 0; }
+    .song-name {
+      font-size: 14px;
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .song-meta {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .song-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      min-width: 90px;
+    }
+    .prob-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      line-height: 1;
+      color: var(--badge-color, var(--text));
+    }
+    .verdict {
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 500;
+    }
+    .verdict.yes  { background: rgba(93,232,160,.12); color: var(--sure); }
+    .verdict.maybe{ background: rgba(232,201,126,.12); color: var(--unsure); }
+    .verdict.no   { background: rgba(232,96,96,.12);   color: var(--no); }
+
+    /* ── SIDEBAR PANEL ── */
+    .sidebar { position: sticky; top: 24px; }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 16px;
+      animation: fadeUp .7s .5s ease both;
+    }
+    .panel h3 {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 18px;
+      margin-bottom: 14px;
+      color: var(--accent);
+    }
+
+    /* LEGEND */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .legend-item:last-child { border-bottom: none; }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .legend-item .range { color: var(--muted); font-size: 11px; margin-left: auto; }
+
+    /* METHOD */
+    .method-step {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .method-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--accent2);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    /* TOP 5 */
+    .top-song {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .top-song:last-child { border-bottom: none; }
+    .top-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--accent2);
+      width: 22px;
+      flex-shrink: 0;
+    }
+    .top-pct {
+      margin-left: auto;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--sure);
+    }
+
+    /* BAR in list */
+    .bar-bg {
+      height: 3px;
+      background: rgba(255,255,255,.07);
+      border-radius: 999px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--bar-color, var(--muted));
+      transition: width .6s ease;
+    }
+
+    /* ── ARTIST SELECTOR ── */
+    .artist-select-wrap {
+      padding: 0 20px 32px;
+      max-width: 1100px;
+      margin: 0 auto;
+      animation: fadeUp .7s .35s ease both;
+    }
+    .artist-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .artist-tab {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .artist-tab.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,201,126,.07);
+    }
+    .artist-tab .tag {
+      font-size: 9px;
+      background: rgba(232,201,126,.15);
+      color: var(--accent);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: .08em;
+    }
+
+    /* EMPTY STATE */
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+    }
+    .empty svg { opacity: .2; margin-bottom: 12px; }
+    .empty p { font-size: 13px; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      letter-spacing: .05em;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="artist-badge"><span class="dot"></span> Predictor de Setlist en Vivo</div>
+  <h1>SET<span class="line2">PREDICT</span></h1>
+  <p class="subtitle">Probabilidad estadística · Conciertos en vivo</p>
+  <div class="tour-tag">✦ Despecho Tour · Jesse &amp; Joy</div>
+</header>
+
+<!-- STATS ROW -->
+<div class="stats-row" id="stats-row"></div>
+
+<!-- ARTIST SELECTOR -->
+<div class="artist-select-wrap">
+  <div class="section-label">Artista</div>
+  <div class="artist-tabs" id="artist-tabs"></div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <!-- LEFT: LIST -->
+  <div>
+    <div class="section-label">Canciones del Tour</div>
+
+    <div class="search-wrap">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="search" type="text" placeholder="Buscar canción…" />
+    </div>
+
+    <div class="filters" id="filters">
+      <button class="filter-btn active" data-filter="all">Todas</button>
+      <button class="filter-btn" data-filter="yes">✓ Se cantará</button>
+      <button class="filter-btn" data-filter="maybe">~ Tal vez</button>
+      <button class="filter-btn" data-filter="no">✗ Probablemente no</button>
+    </div>
+
+    <div id="song-list"></div>
+  </div>
+
+  <!-- RIGHT: SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="panel">
+      <h3>Top 5 más probables</h3>
+      <div id="top5"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Leyenda de probabilidad</h3>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--sure)"></div>
+        <span>Se cantará</span>
+        <span class="range">≥ 70%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--unsure)"></div>
+        <span>Tal vez</span>
+        <span class="range">35% – 69%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--no)"></div>
+        <span>Probablemente no</span>
+        <span class="range">&lt; 35%</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Metodología</h3>
+      <div class="method-step">
+        <div class="step-num">1</div>
+        <div>Se contabilizan las <strong>veces que cada canción</strong> fue interpretada en el tour.</div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">2</div>
+        <div>La probabilidad base es <strong>interpretaciones ÷ total de conciertos</strong> del tour.</div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">3</div>
+        <div>Se aplica suavizado de Laplace para canciones con muy pocas apariciones.</div>
+      </div>
+      <div class="method-step">
+        <div class="step-num">4</div>
+        <div>El veredicto final usa umbrales fijos: ≥70% = segura, 35–69% = posible, &lt;35% = improbable.</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  Datos extraídos de <a href="https://www.setlist.fm" target="_blank">setlist.fm</a> · Despecho Tour — Jesse &amp; Joy · Proyecto de Estadística y Probabilidad
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA — fácilmente extensible con más artistas
+// ─────────────────────────────────────────────
+const ARTISTS = [
+  {
+    id: "jesse-joy",
+    name: "Jesse & Joy",
+    tour: "Despecho Tour",
+    // Total de conciertos con setlists registrados en el tour
+    totalShows: 21,
+    songs: [
+      // [nombre, apariciones]
+      ["¡Corre!", 21],
+      ["Chocolate", 20],
+      ["3 A.M.", 19],
+      ["Espacio sideral", 19],
+      ["Llorar", 19],
+      ["¿Con quién se queda el perro?", 18],
+      ["Dueles", 18],
+      ["La de la mala suerte", 18],
+      ["Me soltaste", 17],
+      ["Te esperé", 17],
+      ["Un besito más", 17],
+      ["Lo que nos faltó decir", 16],
+      ["Tanto", 15],
+      ["Ya no quiero", 14],
+      ["Esto es lo que soy", 13],
+      ["Me quiero enamorar", 13],
+      ["Ecos de amor", 12],
+      ["Digas lo que digas", 11],
+      ["Mi tesoro", 11],
+      ["Mexico en la piel / Si no te hubieras ido / Caray / Volver volver", 7],
+      ["Nuevos recuerdos", 7],
+      ["Llegaste tú", 6],
+      ["Si te vas", 6],
+      ["Medley Mariachi", 4],
+      ["Mi sol", 4],
+      ["Valió la pena", 4],
+      ["Adiós", 3],
+      ["Mi sol / Respirar / Te perdí / Llegaste tú", 3],
+      ["Nube", 3],
+      ["Nube / Adiós / Electricidad", 3],
+      ["Respirar", 3],
+      ["Respirar / Me voy / Valió la pena / Mi sol / Llegaste tú", 3],
+      ["Volveré", 3],
+      ["¡Ay doctor!", 2],
+      ["Accidente", 2],
+      ["Quiéreme despacito", 2],
+      ["¡Corre! / Mi tesoro / Alguien más / Mañana es too late / Perfecta / Si te vas / Electricidad", 1],
+      ["¿Dónde está el amor?", 1],
+      ["Aire", 1],
+      ["Cuando estamos solas", 1],
+      ["Dulce melodía / Invisible / El malo / Adiós", 1],
+      ["Dulce melodía / Muero de amor / Invisible / Monton de estrellas", 1],
+      ["El malo / Adiós", 1],
+      ["Electricidad", 1],
+      ["Flying Away (Joy Huerta cover)", 1],
+      ["Imagina", 1],
+      ["Love Yourself", 1],
+    ]
+  }
+  // Añade más artistas aquí con el mismo formato:
+  // { id, name, tour, totalShows, songs: [[nombre, apariciones], ...] }
+];
+
+// ─────────────────────────────────────────────
+//  PROBABILITY ENGINE
+// ─────────────────────────────────────────────
+function calcProbability(appearances, total) {
+  // Suavizado de Laplace (α=0.5) para evitar extremos
+  const alpha = 0.5;
+  return (appearances + alpha) / (total + alpha * 2);
+}
+
+function getVerdict(prob) {
+  if (prob >= 0.70) return { label: "Se cantará",       cls: "yes",   color: "var(--sure)" };
+  if (prob >= 0.35) return { label: "Tal vez",          cls: "maybe", color: "var(--unsure)" };
+  return               { label: "Probablemente no",  cls: "no",    color: "var(--no)" };
+}
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let currentArtist = ARTISTS[0];
+let currentFilter = "all";
+let currentSearch = "";
+
+// Enrich songs with probability
+function enrichSongs(artist) {
+  return artist.songs
+    .map(([name, appearances]) => {
+      const prob = calcProbability(appearances, artist.totalShows);
+      const verdict = getVerdict(prob);
+      return { name, appearances, prob, verdict };
+    })
+    .sort((a, b) => b.prob - a.prob);
+}
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+function renderArtistTabs() {
+  const el = document.getElementById("artist-tabs");
+  el.innerHTML = ARTISTS.map(a => `
+    <button class="artist-tab ${a.id === currentArtist.id ? "active" : ""}" data-id="${a.id}">
+      ${a.name}
+      <span class="tag">${a.tour}</span>
+    </button>
+  `).join("");
+  el.querySelectorAll(".artist-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentArtist = ARTISTS.find(a => a.id === btn.dataset.id);
+      renderAll();
+    });
+  });
+}
+
+function renderStats(songs) {
+  const total = currentArtist.totalShows;
+  const sure  = songs.filter(s => s.verdict.cls === "yes").length;
+  const maybe = songs.filter(s => s.verdict.cls === "maybe").length;
+  const no    = songs.filter(s => s.verdict.cls === "no").length;
+  const avgProb = Math.round(songs.reduce((acc, s) => acc + s.prob, 0) / songs.length * 100);
+
+  document.getElementById("stats-row").innerHTML = `
+    <div class="stat-pill"><div class="num">${total}</div><div class="lbl">Conciertos</div></div>
+    <div class="stat-pill"><div class="num">${songs.length}</div><div class="lbl">Canciones</div></div>
+    <div class="stat-pill"><div class="num" style="color:var(--sure)">${sure}</div><div class="lbl">Seguras</div></div>
+    <div class="stat-pill"><div class="num" style="color:var(--unsure)">${maybe}</div><div class="lbl">Posibles</div></div>
+    <div class="stat-pill"><div class="num" style="color:var(--no)">${no}</div><div class="lbl">Improbables</div></div>
+  `;
+}
+
+function renderTop5(songs) {
+  const top = songs.slice(0, 5);
+  document.getElementById("top5").innerHTML = top.map((s, i) => `
+    <div class="top-song">
+      <div class="top-num">${i + 1}</div>
+      <div style="font-size:12.5px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.name}</div>
+      <div class="top-pct">${Math.round(s.prob * 100)}%</div>
+    </div>
+  `).join("");
+}
+
+function renderList(songs) {
+  const container = document.getElementById("song-list");
+
+  let filtered = songs;
+  if (currentFilter !== "all") {
+    filtered = filtered.filter(s => s.verdict.cls === currentFilter);
+  }
+  if (currentSearch.trim()) {
+    const q = currentSearch.toLowerCase();
+    filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty">
+      <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+      <p>No hay canciones con esos criterios.</p>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map((s, i) => {
+    const pct = Math.round(s.prob * 100);
+    const color = s.verdict.color;
+    return `
+    <div class="song-card" style="--bar-color:${color}">
+      <div class="song-rank">${i + 1}</div>
+      <div class="song-info">
+        <div class="song-name">${s.name}</div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;--bar-color:${color}"></div></div>
+        <div class="song-meta">${s.appearances} de ${currentArtist.totalShows} conciertos</div>
+      </div>
+      <div class="song-right">
+        <div class="prob-badge" style="--badge-color:${color}">${pct}%</div>
+        <span class="verdict ${s.verdict.cls}">${s.verdict.label}</span>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderAll() {
+  const songs = enrichSongs(currentArtist);
+  renderArtistTabs();
+  renderStats(songs);
+  renderTop5(songs);
+  renderList(songs);
+}
+
+// ─────────────────────────────────────────────
+//  EVENTS
+// ─────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  renderAll();
+
+  // Filters
+  document.getElementById("filters").addEventListener("click", e => {
+    const btn = e.target.closest(".filter-btn");
+    if (!btn) return;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    renderList(enrichSongs(currentArtist));
+  });
+
+  // Search
+  document.getElementById("search").addEventListener("input", e => {
+    currentSearch = e.target.value;
+    renderList(enrichSongs(currentArtist));
+  });
+});
+</script>
+</body>
+</html>
