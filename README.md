@@ -1,10 +1,3 @@
-# 🌮 Sistema de Gestión "Los Consentidos"
-
-Aplicación web diseñada para la gestión integral de un restaurante. Permite la administración de órdenes, control de inventario, gestión de personal, mapa de mesas y recepción de reseñas mediante códigos QR. 
-
-El proyecto está construido con **HTML, CSS y JavaScript puro (Vanilla JS)** en el frontend, conectado directamente a una base de datos **PostgreSQL en la nube mediante Supabase**.
-
----
 
 ## 💻 Módulos de la Interfaz (Frontend)
 
@@ -14,7 +7,7 @@ El sistema está dividido en secciones interactivas que se actualizan de forma a
   <details>
   <summary>🖼️ Ver captura de Órdenes</summary>
   <br>
-  <img loading="lazy" src="https://media.discordapp.net/attachments/1474619815225196635/1509423354266779658/image.png?ex=6a191f8b&is=6a17ce0b&hm=33e1addec4938fbb265aec06c4a3f7787df94a08a9686d7c664451baf2a9ee03&=&format=webp&quality=lossless&width=1589&height=800 alt="Módulo de Órdenes" width="800"/>
+  <img loading="lazy" src="https://media.discordapp.net/attachments/1474619815225196635/1509423354266779658/image.png?ex=6a191f8b&is=6a17ce0b&hm=33e1addec4938fbb265aec06c4a3f7787df94a08a9686d7c664451baf2a9ee03&=&format=webp&quality=lossless&width=1589&height=800" alt="Módulo de Órdenes" width="800"/>
   </details>
 
 * **🍽️ Menú:** Visualización del catálogo de alimentos filtrable por categorías. Permite registrar nuevos platillos indicando nombre, precio y categoría.
