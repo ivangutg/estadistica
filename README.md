@@ -51,3 +51,9 @@ El sistema utiliza un esquema relacional diseñado para mantener la integridad d
 * **Backend / BaaS:** Supabase (PostgreSQL, APIs REST automáticas)
 * **Hosting:** GitHub Pages
 * **APIs Externas:** QR Server API
+<details>
+  <summary>🖼️ Ver captura de Órdenes</summary>
+  <br>
+  <img loading="lazy" src="https://media.discordapp.net/attachments/1474619815225196635/1509422309243490315/image.png?ex=6a191e92&is=6a17cd12&hm=e08419d35a68652fe999e8023e753806e9958a45cdfa2c3fcce8f8e68077fe06&=&format=webp&quality=lossless&width=1054&height=930" alt="Módulo de Órdenes" width="800"/>
+  </details>
+
