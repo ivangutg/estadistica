@@ -1,5 +1,16 @@
+# 🌮 Sistema de Gestión "Los Consentidos"
 
-## 💻 Módulos de la Interfaz (Frontend)
+Aplicación web diseñada para la gestión integral de un restaurante. Permite la administración de órdenes, control de inventario, gestión de personal, mapa de mesas y recepción de reseñas mediante códigos QR. 
+
+## 🚀 Tecnologías Utilizadas
+* **Frontend:** HTML5, CSS3, JavaScript 
+* **Backend / BaaS:** Supabase (PostgreSQL)
+* **Hosting:** GitHub Pages
+* **APIs Externas:** QR Server API
+
+---
+
+## 💻 Funcionalidades y capturas de pantalla
 
 El sistema está dividido en secciones interactivas que se actualizan de forma asíncrona mediante llamadas a la API REST de Supabase:
 
@@ -59,8 +70,7 @@ El sistema está dividido en secciones interactivas que se actualizan de forma a
   <img loading="lazy" src="https://media.discordapp.net/attachments/1474619815225196635/1509424316297777242/image.png?ex=6a192070&is=6a17cef0&hm=ac33fe06fd7a3c3c25245662424b37230bf2bb975717ef7f1841426492326995&=&format=webp&quality=lossless&width=499&height=930" alt="Panel de Notificaciones" width="400"/>
   </details>
 
-## 🚀 Tecnologías Utilizadas
-* **Frontend:** HTML5, CSS3, JavaScript (ES6+)
-* **Backend / BaaS:** Supabase (PostgreSQL, APIs REST automáticas)
-* **Hosting:** GitHub Pages
-* **APIs Externas:** QR Server API
+
+### 🔗 Enlaces
+Código Fuente: [Repositorio](https://github.com/aeiou520814-del/abc)
+Demo en Vivo: [Página Web](https://aeiou520814-del.github.io/abc/)
